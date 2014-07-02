@@ -121,8 +121,14 @@
       var data = JSON.parse(xhr.responseText);
 
       // Tell the globe about your JSON data
-      for (var serie in data) {
-        globe.addData(data[serie].items, {format: 'magnitude', name: serie, color: data[serie].color});
+      for(var addr in data.attackers) {
+        data.attackers[addr].campaigns.forEach(function(element, index, array) {
+          globe.addData(
+            data.attackers[addr].coords.concat(data.attackers[addr].score,
+            {format: 'magnitude', name: serie, color: data.collors[element]}
+          );
+        });
+        // globe.addData(data[serie].items, {format: 'magnitude', name: serie, color: data[serie].color});
       }
 
       // Create the geometry
