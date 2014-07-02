@@ -150,7 +150,10 @@ DAT.Globe = function(container, opts) {
 
     container.addEventListener('mousedown', onMouseDown, false);
 
-    container.addEventListener('mousewheel', onMouseWheel, false);
+    // Chrome
+    container.addEventListener('mousewheel', onMouseWheelChrome, false);
+    // Firefox
+    container.addEventListener('DOMMouseScroll', onMouseWheelFF, false);
 
     document.addEventListener('keydown', onDocumentKeyDown, false);
 
@@ -324,10 +327,18 @@ DAT.Globe = function(container, opts) {
     container.removeEventListener('mouseout', onMouseOut, false);
   }
 
-  function onMouseWheel(event) {
+  function onMouseWheelChrome(event) {
     event.preventDefault();
     if (overRenderer) {
       zoom(event.wheelDeltaY * 0.3);
+    }
+    return false;
+  }
+
+  function onMouseWheelFF(event) {
+    event.preventDefault();
+    if (overRenderer) {
+      zoom(event.detail * 1.5);
     }
     return false;
   }
