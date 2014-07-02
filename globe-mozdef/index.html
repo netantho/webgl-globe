@@ -167,9 +167,7 @@
       // Tell the globe about your JSON data
       console.log(data);
       for (var serie in data) {
-        console.log(serie);
-        console.log(data[serie]);
-        globe.addData(data[serie], {format: 'magnitude', name: serie});
+        globe.addData(data[serie].items, {format: 'magnitude', name: serie, color: data[serie].color});
       }
 
       console.log("create");

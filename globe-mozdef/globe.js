@@ -189,7 +189,12 @@ DAT.Globe = function(container, opts) {
           lat = data[i];
           lng = data[i + 1];
 //        size = data[i + 2];
-          color = colorFnWrapper(data,i);
+          if (opts.color) {
+            color = new THREE.Color(opts.color);
+          }
+          else {
+            colorFnWrapper(data,i);
+          }
           size = 0;
           addPoint(lat, lng, size, color, this._baseGeometry);
         }
@@ -210,7 +215,12 @@ DAT.Globe = function(container, opts) {
     for (i = 0; i < data.length; i += step) {
       lat = data[i];
       lng = data[i + 1];
-      color = colorFnWrapper(data,i);
+      if (opts.color) {
+        color = new THREE.Color(opts.color);
+      }
+      else {
+        colorFnWrapper(data,i);
+      }
       size = data[i + 2];
       size = size*200;
       addPoint(lat, lng, size, color, subgeo);
