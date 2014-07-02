@@ -334,10 +334,12 @@ DAT.Globe = function(container, opts) {
 
   function onDocumentKeyDown(event) {
     switch (event.keyCode) {
+      // KEY_UP
       case 38:
         zoom(100);
         event.preventDefault();
         break;
+      // KEY_DOWN
       case 40:
         zoom(-100);
         event.preventDefault();
@@ -352,9 +354,11 @@ DAT.Globe = function(container, opts) {
   }
 
   function zoom(delta) {
+    var DISTANCE_MAX = 1500;
+    var DISTANCE_MIN = 300;
     distanceTarget -= delta;
-    distanceTarget = distanceTarget > 1000 ? 1000 : distanceTarget;
-    distanceTarget = distanceTarget < 350 ? 350 : distanceTarget;
+    distanceTarget = distanceTarget > DISTANCE_MAX ? DISTANCE_MAX : distanceTarget;
+    distanceTarget = distanceTarget < DISTANCE_MIN ? DISTANCE_MIN : distanceTarget;
   }
 
   function animate() {

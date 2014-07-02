@@ -165,12 +165,10 @@
       var data = JSON.parse(xhr.responseText);
 
       // Tell the globe about your JSON data
-      console.log(data);
       for (var serie in data) {
         globe.addData(data[serie].items, {format: 'magnitude', name: serie, color: data[serie].color});
       }
 
-      console.log("create");
       // Create the geometry
       globe.createPoints();
 
