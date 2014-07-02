@@ -15,6 +15,7 @@ var DAT = DAT || {};
 
 DAT.Globe = function(container, opts) {
   opts = opts || {};
+  spin = false;
   
   var colorFn = opts.colorFn || function(x) {
     var c = new THREE.Color();
@@ -344,6 +345,11 @@ DAT.Globe = function(container, opts) {
 
   function onDocumentKeyDown(event) {
     switch (event.keyCode) {
+      // SPACE
+      case 32:
+        toggleSpin();
+        event.preventDefault();
+        break;
       // KEY_LEFT
       case 37:
         move(10, 0, 0, 0);
@@ -375,7 +381,7 @@ DAT.Globe = function(container, opts) {
 
   function move(left, right, up, down) {
     var zoomDamp = distance/1000;
-    var nx = target.y - left + right;
+    var nx = target.x - left + right;
     var ny = target.y - down + up;
 
     target.x = target.x + (nx - target.x) * 0.005 * zoomDamp;
@@ -383,6 +389,18 @@ DAT.Globe = function(container, opts) {
 
     target.y = target.y > PI_HALF ? PI_HALF : target.y;
     target.y = target.y < - PI_HALF ? - PI_HALF : target.y;
+  }
+
+  function doSpin() {
+    setInterval(function() {
+      if (spin) {
+        move(5, 0, 0, 0)
+      }
+    }, 70);
+  }
+
+  function toggleSpin() {
+    spin = !spin;
   }
 
   function zoom(delta) {
@@ -416,6 +434,7 @@ DAT.Globe = function(container, opts) {
 
   init();
   this.animate = animate;
+  this.doSpin = doSpin;
 
 
   this.__defineGetter__('time', function() {
