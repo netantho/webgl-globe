@@ -82,57 +82,21 @@
 <div id="info">
   Controls:
   <ul>
-    <li>key up: zoom</li>
-    <li>key down: unzoom</li>
+    <li>use arrow key or mouse to move</li>
     <li>wheel: (un)zoom</li>
   </ul>
-  <br><br>
-  Powered by <a href="http://www.chromeexperiments.com/globe">WebGL Globe</a><!-- an
-  open platform for visualizing geographic data. <span
-    class="bull">&bull;</span> <a href="https://github.com/dataarts/webgl-globe">Get
-  the code</a> <span class="bull">&bull;</span> By the Google Data Arts Team</a> -->
+  Powered by <a href="http://www.chromeexperiments.com/globe">WebGL Globe</a>
 </div>
 
 <div id="title">
   MozDef Globe
 </div>
 
-<!-- <a id="ce" href="http://www.chromeexperiments.com/globe">
-  <span>This is a Chrome Experiment</span>
-</a> -->
-
 
 <script type="text/javascript" src="/globe-mozdef/third-party/Detector.js"></script>
 <script type="text/javascript" src="/globe-mozdef/third-party/three.min.js"></script>
 <script type="text/javascript" src="/globe-mozdef/globe.js"></script>
 <script type="text/javascript">
-
-  // var globe = DAT.Globe(document.getElementById('container'), {
-  //   colorFn: function(label) {
-  //     return new THREE.Color([
-  //       0xd9d9d9, 0xb6b4b5, 0x9966cc, 0x15adff, 0x3e66a3,
-  //       0x216288, 0xff7e7e, 0xff1f13, 0xc0120b, 0x5a1301, 0xffcc02,
-  //       0xedb113, 0x9fce66, 0x0c9a39,
-  //       0xfe9872, 0x7f3f98, 0xf26522, 0x2bb673, 0xd7df23,
-  //       0xe6b23a, 0x7ed3f7][label]);
-  //   }
-  // });
-
-  // xhr = new XMLHttpRequest();
-  // xhr.open('GET', '/globe-mozdef/mozdef-data.json', true);
-  // xhr.onreadystatechange = function(e) {
-  //   if (xhr.readyState === 4) {
-  //     if (xhr.status === 200) {
-  //       var data = JSON.parse(xhr.responseText);
-  //       window.data = data;
-  //       globe.addData(data, {format: 'legend'});
-  //       globe.createPoints();
-  //       globe.animate();
-  //       document.body.style.backgroundImage = 'none'; // remove loading
-  //     }
-  //   }
-  // };
-  // xhr.send(null);
 
   // Where to put the globe?
   var container = document.getElementById('container');
@@ -144,7 +108,7 @@
   var xhr = new XMLHttpRequest();
 
   // Where do we get the data?
-  xhr.open('GET', '/globe-mozdef/mozdef-data.json', false);
+  xhr.open('GET', '/globe-mozdef/mozdef-data.json', true);
 
   // What do we do when we have it?
   xhr.onreadystatechange = function() {

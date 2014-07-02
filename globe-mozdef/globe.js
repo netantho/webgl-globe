@@ -174,7 +174,6 @@ DAT.Globe = function(container, opts) {
     opts.animated = opts.animated || false;
     this.is_animated = opts.animated;
     opts.format = opts.format || 'magnitude'; // other option is 'legend'
-    console.log(opts.format);
     if (opts.format === 'magnitude') {
       step = 3;
       colorFnWrapper = function(data, i) { return colorFn(data[i+2]); }
@@ -345,14 +344,24 @@ DAT.Globe = function(container, opts) {
 
   function onDocumentKeyDown(event) {
     switch (event.keyCode) {
+      // KEY_LEFT
+      case 37:
+        move(10, 0, 0, 0);
+        event.preventDefault();
+        break;
       // KEY_UP
       case 38:
-        zoom(100);
+        move(0, 0, 10, 0);
+        event.preventDefault();
+        break;
+      // KEY_RIGHT
+      case 39:
+        move(0, 10, 0, 0);
         event.preventDefault();
         break;
       // KEY_DOWN
       case 40:
-        zoom(-100);
+        move(0, 0, 0, 10);
         event.preventDefault();
         break;
     }
@@ -362,6 +371,18 @@ DAT.Globe = function(container, opts) {
     camera.aspect = window.innerWidth / window.innerHeight;
     camera.updateProjectionMatrix();
     renderer.setSize( window.innerWidth, window.innerHeight );
+  }
+
+  function move(left, right, up, down) {
+    var zoomDamp = distance/1000;
+    var nx = target.y - left + right;
+    var ny = target.y - down + up;
+
+    target.x = target.x + (nx - target.x) * 0.005 * zoomDamp;
+    target.y = target.y + (ny - target.y) * 0.005 * zoomDamp;
+
+    target.y = target.y > PI_HALF ? PI_HALF : target.y;
+    target.y = target.y < - PI_HALF ? - PI_HALF : target.y;
   }
 
   function zoom(delta) {
