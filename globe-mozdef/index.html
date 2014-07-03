@@ -79,6 +79,21 @@
       padding: 10px;
     }
 
+    #facts {
+      width: 300px;
+      position: absolute;
+      left: 10px;
+      bottom: 0px;
+      background-color: rgba(0,0,0,0.2);
+      border-top: 1px solid rgba(255,255,255,0.4);
+      border-right: 1px solid rgba(255,255,255,0.4);
+      padding: 10px;
+
+      font: 12px Georgia;
+      color: rgba(255, 255, 255, 0.9);
+      display: none;
+    }
+
     .campaign {
 
       font: 12px Georgia;
@@ -131,6 +146,15 @@
   MozDef Globe
 </div>
 
+<div id="facts">
+  <span id="attacker_addr"></span>
+  <ul>
+    <li>score: <span id="attacker_score"></span></li>
+    <li>campaigns: <span id="attacker_campaigns"></span></li>
+    <li>last seen: <span id="attacker_lastseen"></span></li>
+  </ul>
+</div>
+
 <div id="campaigns">
   <span id="allcampaigns" class="campaign">all</span>
   <span id="bruteforce" class="campaign">bruteforce</span>
@@ -151,6 +175,7 @@
 <script type="text/javascript" src="/globe-mozdef/third-party/three.min.js"></script>
 <script type="text/javascript" src="/globe/third-party/Tween.js"></script>
 <script type="text/javascript" src="/globe-mozdef/globe.js"></script>
+<script src="//code.jquery.com/jquery-1.11.0.min.js"></script>
 <script type="text/javascript">
 
   // Where to put the globe?
