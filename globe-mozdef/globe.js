@@ -285,6 +285,12 @@ DAT.Globe = function(container, opts) {
     THREE.GeometryUtils.merge(subgeo, point);
   }
 
+  function removePoints() {
+    scene.remove(this.points);
+    this._baseGeometry = undefined;
+    this.points = undefined;
+  }
+
   function onMouseDown(event) {
     event.preventDefault();
 
@@ -432,9 +438,54 @@ DAT.Globe = function(container, opts) {
     renderer.render(scene, camera);
   }
 
+  function drawData(data, campaign, time) {
+    // Tell the globe about your JSON data
+    var self = this;
+    var timeinterval;
+    // ['last15mins', 'last1h', 'last12h', 'last1d', 'last1w', 'last1month']
+    if (time == 'last15mins') {
+      timeinterval = 1000*60*15;
+    }
+    else if (time == 'last1h') {
+      timeinterval = 1000*60*60;
+    }
+    else if (time == 'last12h') {
+      timeinterval = 1000*60*60*12;
+    }
+    else if (time == 'last1d') {
+      timeinterval = 1000*60*60*24;
+    }
+    else if (time == 'last1w') {
+      timeinterval = 1000*60*60*24*7;
+    }
+    else if (time == 'last1month') {
+      timeinterval = 1000*60*60*24*30;
+    }
+    for(var addr in data.attackers) {
+      data.attackers[addr].campaigns.forEach(function(element, index, array) {
+        if (campaign == 'allcampaigns' || element == campaign) {
+          var last_seen = Date.parse(data.attackers[addr].last_seen);
+          var now = new Date();
+          if (now.getTime() - timeinterval < last_seen) {
+            self.addData(
+              data.attackers[addr].coords.concat(data.attackers[addr].score),
+              {format: 'magnitude', name: data.colors[element], color: data.colors[element]}
+            );
+          }
+        }
+      });
+    }
+
+    // Create the geometry
+    self.createPoints();
+    // settime(globe,0)();
+  }
+
   init();
   this.animate = animate;
   this.doSpin = doSpin;
+  this.removePoints = removePoints;
+  this.drawData = drawData;
 
 
   this.__defineGetter__('time', function() {
@@ -463,6 +514,34 @@ DAT.Globe = function(container, opts) {
     }
     this.points.morphTargetInfluences[index] = leftover;
     this._time = t;
+  });
+
+  this.__defineGetter__('campaign', function() {
+    return this._campaign || '';
+  });
+
+  this.__defineSetter__('campaign', function(t) {
+    var validMorphs = [];
+    var morphDict = this.points.morphTargetDictionary;
+    for(var k in morphDict) {
+      if(k.indexOf('morphPadding') < 0) {
+        validMorphs.push(morphDict[k]);
+      }
+    }
+    validMorphs.sort();
+    var l = validMorphs.length-1;
+    var scaledt = t*l+1;
+    var index = Math.floor(scaledt);
+    for (i=0;i<validMorphs.length;i++) {
+      this.points.morphTargetInfluences[validMorphs[i]] = 0;
+    }
+    var lastIndex = index - 1;
+    var leftover = scaledt - index;
+    if (lastIndex >= 0) {
+      this.points.morphTargetInfluences[lastIndex] = 1 - leftover;
+    }
+    this.points.morphTargetInfluences[index] = leftover;
+    this._campaign = t;
   });
 
   this.addData = addData;

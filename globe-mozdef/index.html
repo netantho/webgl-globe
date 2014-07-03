@@ -55,9 +55,47 @@
       padding: 15px;
     }
 
-    .year {
+    #campaigns {
+      width: 270px;
+      position: absolute;
+      left: 10px;
+      top: 63px;
 
-      font: 16px Georgia;
+      background-color: rgba(0,0,0,0.2);
+
+      border-top: 1px solid rgba(255,255,255,0.4);
+      padding: 10px;
+    }
+
+    #time {
+      width: 400px;
+      position: absolute;
+      left: 10px;
+      top: 103px;
+
+      background-color: rgba(0,0,0,0.2);
+
+      border-top: 1px solid rgba(255,255,255,0.4);
+      padding: 10px;
+    }
+
+    .campaign {
+
+      font: 12px Georgia;
+      line-height: 26px;
+      height: 30px;
+      text-align: center;
+      float: left;
+      width: 60px;
+      color: rgba(255, 255, 255, 0.4);
+
+      cursor: pointer;
+      -webkit-transition: all 0.1s ease-out;
+    }
+
+    .time {
+
+      font: 12px Georgia;
       line-height: 26px;
       height: 30px;
       text-align: center;
@@ -69,8 +107,8 @@
       -webkit-transition: all 0.1s ease-out;
     }
 
-    .year:hover, .year.active {
-      font-size: 23px;
+    .compaign:hover, .campaign.active, .time:hover, .time.active {
+      font-size: 14px;
       color: #fff;
     }
   </style>
@@ -93,9 +131,25 @@
   MozDef Globe
 </div>
 
+<div id="campaigns">
+  <span id="allcampaigns" class="campaign">all</span>
+  <span id="bruteforce" class="campaign">bruteforce</span>
+  <span id="fail2ban" class="campaign">fail2ban</span>
+  <span id="addons" class="campaign">addons</span>
+</div>
+
+<div id="time">
+  <span id="last15mins" class="time">last 15 mins</span>
+  <span id="last1h" class="time">last 1h</span>
+  <span id="last12h" class="time">last 12h</span>
+  <span id="last1d" class="time">last 1d</span>
+  <span id="last1w" class="time">last 1 week</span>
+  <span id="last1month" class="time">last 1 month</span>
+</div>
 
 <script type="text/javascript" src="/globe-mozdef/third-party/Detector.js"></script>
 <script type="text/javascript" src="/globe-mozdef/third-party/three.min.js"></script>
+<script type="text/javascript" src="/globe/third-party/Tween.js"></script>
 <script type="text/javascript" src="/globe-mozdef/globe.js"></script>
 <script type="text/javascript">
 
@@ -105,8 +159,60 @@
   // Make the globe
   var globe = new DAT.Globe(container);
 
+  var campaigns = ['allcampaigns', 'bruteforce', 'fail2ban', 'addons'];
+  var time = ['last15mins', 'last1h', 'last12h', 'last1d', 'last1w', 'last1month']
+  var currentCampaign = 0;
+  var currentTime = 3;
+
+  var setcampaign = function(globe, t) {
+    return function() {
+      currentCampaign = t;
+      var y = document.getElementById(campaigns[t]);
+      if (y.getAttribute('class') === 'campaign active') {
+        return;
+      }
+      var yy = document.getElementsByClassName('campaign');
+      for(i=0; i<yy.length; i++) {
+        yy[i].setAttribute('class','campaign');
+      }
+      y.setAttribute('class', 'campaign active');
+
+      globe.removePoints();
+      globe.drawData(data, campaigns[currentCampaign], time[currentTime]);
+    };
+  };
+
+  for(var i = 0; i<campaigns.length; i++) {
+    var y = document.getElementById(campaigns[i]);
+    y.addEventListener('mouseover', setcampaign(globe,i), false);
+  }
+
+  var settime = function(globe, t) {
+    return function() {
+      currentTime = t;
+      var y = document.getElementById(time[t]);
+      if (y.getAttribute('class') === 'time active') {
+        return;
+      }
+      var yy = document.getElementsByClassName('time');
+      for(i=0; i<yy.length; i++) {
+        yy[i].setAttribute('class','time');
+      }
+      y.setAttribute('class', 'time active');
+
+      globe.removePoints();
+      globe.drawData(data, campaigns[currentCampaign], time[currentTime]);
+    };
+  };
+
+  for(var i = 0; i<time.length; i++) {
+    var y = document.getElementById(time[i]);
+    y.addEventListener('mouseover', settime(globe,i), false);
+  }
+
   // We're going to ask a file for the JSON data.
   var xhr = new XMLHttpRequest();
+  var data;
 
   // Where do we get the data?
   xhr.open('GET', '/globe-mozdef/mozdef-data.json', true);
@@ -118,21 +224,10 @@
     if (xhr.readyState === 4 && xhr.status === 200) {
 
       // Parse the JSON
-      var data = JSON.parse(xhr.responseText);
+      data = JSON.parse(xhr.responseText);
 
-      // Tell the globe about your JSON data
-      for(var addr in data.attackers) {
-        data.attackers[addr].campaigns.forEach(function(element, index, array) {
-          globe.addData(
-            data.attackers[addr].coords.concat(data.attackers[addr].score,
-            {format: 'magnitude', name: serie, color: data.collors[element]}
-          );
-        });
-        // globe.addData(data[serie].items, {format: 'magnitude', name: serie, color: data[serie].color});
-      }
-
-      // Create the geometry
-      globe.createPoints();
+      setcampaign(globe, currentCampaign)();
+      settime(globe, currentTime)();
 
       // Begin animation
       globe.animate();
